@@ -3,3 +3,5 @@ environs==15.2.0
 standard-imghdr==3.13.0
 urllib3==1.26.15
 setuptools==81.0.0
+google_cloud_dialogflow==2.54.0
+google_cloud_api_keys==0.9.1
