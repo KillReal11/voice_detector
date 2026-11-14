@@ -42,11 +42,12 @@ def reply_with_dialogflow(event, project_id, vk_api):
         event.text,
         language_code="ru"
     )
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=intent_answer.fulfillment_text,
-        random_id=random.randint(1, 1000)
-    )
+    if not intent_answer.intent.is_fallback:
+        vk_api.messages.send(
+            user_id=event.user_id,
+            message=intent_answer.fulfillment_text,
+            random_id=random.randint(1, 1000)
+        )
     logger.info("%s | %s", intent_answer.intent.display_name, intent_answer.fulfillment_text)
 
 
