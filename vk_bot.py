@@ -1,13 +1,13 @@
-from vk_api.longpoll import VkLongPoll, VkEventType
+import logging
+import random
+
 import vk_api as vk
 from environs import Env
-import random
 from google.cloud import dialogflow
-import logging
-
+from vk_api.longpoll import VkEventType, VkLongPoll
 
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
 logger = logging.getLogger(__name__)
@@ -15,9 +15,7 @@ logger = logging.getLogger(__name__)
 
 def echo(event, vk_api):
     vk_api.messages.send(
-        user_id=event.user_id,
-        message=event.text,
-        random_id=random.randint(1, 1000)
+        user_id=event.user_id, message=event.text, random_id=random.randint(1, 1000)
     )
 
 
@@ -37,18 +35,17 @@ def detect_intent_texts(project_id, session_id, text, language_code):
 def reply_with_dialogflow(event, project_id, vk_api):
     session_id = str(event.user_id)
     intent_answer = detect_intent_texts(
-        project_id,
-        session_id,
-        event.text,
-        language_code="ru"
+        project_id, session_id, event.text, language_code="ru"
     )
     if not intent_answer.intent.is_fallback:
         vk_api.messages.send(
             user_id=event.user_id,
             message=intent_answer.fulfillment_text,
-            random_id=random.randint(1, 1000)
+            random_id=random.randint(1, 1000),
         )
-    logger.info("%s | %s", intent_answer.intent.display_name, intent_answer.fulfillment_text)
+    logger.info(
+        "%s | %s", intent_answer.intent.display_name, intent_answer.fulfillment_text
+    )
 
 
 if __name__ == "__main__":
