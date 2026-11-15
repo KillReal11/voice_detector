@@ -40,6 +40,13 @@ def handle_error(update: object, context: CallbackContext) -> None:
     logger.error("Ошибка при обработке сообщения", exc_info=context.error)
 
 
+def build_request_kwargs(proxy_url):
+    request_kwargs = {"connect_timeout": 20.0, "read_timeout": 20.0}
+    if proxy_url:
+        request_kwargs["proxy_url"] = proxy_url
+    return request_kwargs
+
+
 def main():
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -50,8 +57,9 @@ def main():
     env.read_env()
     tg_token = env.str("TG_TOKEN")
     project_id = env.str("DIALOGFLOW_PROJECT_ID")
+    proxy_url = env.str("PROXY_SOCKS5", default=None)
 
-    updater = Updater(tg_token)
+    updater = Updater(tg_token, request_kwargs=build_request_kwargs(proxy_url))
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("start", start))

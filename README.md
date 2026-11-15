@@ -9,7 +9,7 @@
 | Telegram |  |
 | VK |  |
 
-<!-- Гифки с диалогами: ![Гифки с диалогами](demo.gif) -->
+![Гифки с диалогами](tg_demo.gif)
 
 ## Что делают боты
 
@@ -24,7 +24,7 @@
 
 ## Установка
 
-Нужен Python 3.11 или 3.12.
+Нужен Python 3.11.
 
 ```bash
 git clone https://github.com/KillReal11/voice_detector
