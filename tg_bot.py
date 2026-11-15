@@ -1,6 +1,5 @@
 import logging
 from functools import partial
-import time
 
 from environs import Env
 from telegram import ForceReply, Update
@@ -15,8 +14,6 @@ from telegram.ext import (
 from dialogflow_utils import detect_intent
 from logging_utils import configure_logging
 
-MIN_RETRY_DELAY = 10
-MAX_RETRY_DELAY = 300
 
 logger = logging.getLogger("tg_bot")
 
@@ -58,7 +55,6 @@ def main():
     proxy_url = env.str("PROXY_SOCKS5", default=None)
 
     configure_logging(logger, env)
-    retry_delay = MIN_RETRY_DELAY
     try:
         updater = Updater(tg_token, request_kwargs=build_request_kwargs(proxy_url))
         dispatcher = updater.dispatcher
@@ -76,9 +72,8 @@ def main():
         logger.info("Telegram-бот запущен")
         updater.idle()
     except Exception:
-        logger.exception(f"Telegram-бот упал с ошибкой, перезапуск через {retry_delay} с")
-        time.sleep(retry_delay)
-        retry_delay = min(retry_delay * 2, MAX_RETRY_DELAY)
+        logger.exception("Telegram-бот упал с ошибкой")
+        raise
 
 
 if __name__ == "__main__":

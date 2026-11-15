@@ -1,6 +1,5 @@
 import logging
 import random
-import time
 
 import vk_api as vk
 from environs import Env
@@ -38,7 +37,6 @@ def main():
     project_id = env.str("DIALOGFLOW_PROJECT_ID")
 
     configure_logging(logger, env)
-    retry_delay = MIN_RETRY_DELAY
     try:
         vk_session = vk.VkApi(token=vk_token)
         vk_api = vk_session.get_api()
@@ -52,9 +50,8 @@ def main():
                 except Exception:
                     logger.exception("Ошибка при обработке сообщения")
     except Exception:
-        logger.exception(f"VK-бот упал с ошибкой, перезапуск через {retry_delay} с")
-        time.sleep(retry_delay)
-        retry_delay = min(retry_delay * 2, MAX_RETRY_DELAY)
+        logger.exception("VK-бот упал с ошибкой")
+        raise
 
 
 if __name__ == "__main__":

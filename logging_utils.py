@@ -20,9 +20,9 @@ class TelegramLogsHandler(logging.Handler):
         self.bot = bot
 
     def emit(self, record):
-        log_entry = self.format(record)
+        log_entry = self.format(record)[-4000:]
         try:
-            self.tg_bot.send_message(chat_id=self.chat_id, text=log_entry)
+            self.bot.send_message(chat_id=self.chat_id, text=log_entry)
         except Exception:
             self.handleError(record)
 
@@ -33,7 +33,7 @@ def configure_logging(logger, env):
         datefmt=LOG_DATEFORMAT,
         level=logging.INFO
     )
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 
     token = env.str("TG_LOG_TOKEN", None)
     chat_id = env.str("TG_LOG_CHAT_ID", None)
