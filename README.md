@@ -9,7 +9,7 @@
 | Telegram |  |
 | VK |  |
 
-![Гифки с диалогами](tg_demo.gif)
+![Гифки с диалогами](<img width="517" height="305" alt="tg_demo" src="https://github.com/user-attachments/assets/ffb84378-d6f6-422b-a252-a986f133e72b" />)
 
 ## Что делают боты
 
