@@ -49,6 +49,8 @@ TG_TOKEN=токен_телеграм_бота
 VK_TOKEN=токен_сообщества_vk
 DIALOGFLOW_PROJECT_ID=id_проекта_в_google_cloud
 GOOGLE_APPLICATION_CREDENTIALS=путь/к/файлу/с/ключами.json
+TG_LOG_CHAT_ID=ваш_телеграмм_id
+TG_LOG_TOKEN=токен_телеграм_бота_для_отправки_логов
 ```
 
 ## Загрузка интентов
