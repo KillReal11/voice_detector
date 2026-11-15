@@ -15,7 +15,7 @@ MAX_RETRY_DELAY = 300
 logger = logging.getLogger("vk_bot")
 
 
-def reply_with_dialogflow(event, project_id, vk_api):
+def reply_with_dialogflow(event, vk_api, project_id):
     session_id = f"vk-{event.user_id}"
     intent_answer = detect_intent(project_id, session_id, event.text)
     logger.debug(

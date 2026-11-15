@@ -1,0 +1,15 @@
+[Unit]
+Description=Telegram support bot (Dialogflow)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=botuser
+WorkingDirectory=/opt/voice_detector
+ExecStart=/opt/voice_detector/.venv/bin/python tg_bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
