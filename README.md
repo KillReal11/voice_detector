@@ -6,8 +6,8 @@
 
 | Бот | Ссылка |
 |-----|--------|
-| Telegram |  |
-| VK |  |
+| Telegram |https://t.me/voice_detector_1_bot|
+| VK |https://vk.ru/club243276281|
 
 <img width="517" height="305" alt="tg_demo" src="https://github.com/user-attachments/assets/a2cba6ec-6088-4f81-a7a3-39120bdbcc39" />
 
