@@ -1,7 +1,6 @@
-#!/usr/bin/env python
-
 import logging
 from functools import partial
+import time
 
 from environs import Env
 from telegram import ForceReply, Update
@@ -14,8 +13,12 @@ from telegram.ext import (
 )
 
 from dialogflow_utils import detect_intent
+from logging_utils import configure_logging
 
-logger = logging.getLogger(__name__)
+MIN_RETRY_DELAY = 10
+MAX_RETRY_DELAY = 300
+
+logger = logging.getLogger("tg_bot")
 
 
 def start(update: Update, context: CallbackContext) -> None:
@@ -29,7 +32,7 @@ def start(update: Update, context: CallbackContext) -> None:
 def reply_with_dialogflow(update: Update, context: CallbackContext, project_id) -> None:
     session_id = f"tg-{update.effective_chat.id}"
     intent_answer = detect_intent(project_id, session_id, update.message.text)
-    logger.info(
+    logger.debug(
         "%s | %s", intent_answer.intent.display_name,
         intent_answer.fulfillment_text
     )
@@ -48,32 +51,34 @@ def build_request_kwargs(proxy_url):
 
 
 def main():
-    logging.basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=logging.INFO
-    )
-
     env = Env()
     env.read_env()
     tg_token = env.str("TG_TOKEN")
     project_id = env.str("DIALOGFLOW_PROJECT_ID")
     proxy_url = env.str("PROXY_SOCKS5", default=None)
 
-    updater = Updater(tg_token, request_kwargs=build_request_kwargs(proxy_url))
-    dispatcher = updater.dispatcher
+    configure_logging(logger, env)
+    retry_delay = MIN_RETRY_DELAY
+    try:
+        updater = Updater(tg_token, request_kwargs=build_request_kwargs(proxy_url))
+        dispatcher = updater.dispatcher
 
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(
-        MessageHandler(
-            Filters.text & ~Filters.command,
-            partial(reply_with_dialogflow, project_id=project_id),
+        dispatcher.add_handler(CommandHandler("start", start))
+        dispatcher.add_handler(
+            MessageHandler(
+                Filters.text & ~Filters.command,
+                partial(reply_with_dialogflow, project_id=project_id),
+            )
         )
-    )
-    dispatcher.add_error_handler(handle_error)
+        dispatcher.add_error_handler(handle_error)
 
-    updater.start_polling()
-
-    updater.idle()
+        updater.start_polling()
+        logger.info("Telegram-бот запущен")
+        updater.idle()
+    except Exception:
+        logger.exception(f"Telegram-бот упал с ошибкой, перезапуск через {retry_delay} с")
+        time.sleep(retry_delay)
+        retry_delay = min(retry_delay * 2, MAX_RETRY_DELAY)
 
 
 if __name__ == "__main__":
